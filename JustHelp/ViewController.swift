@@ -8,8 +8,9 @@
 
 import UIKit
 import SnapKit
+import MessageUI
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
     
     let TEXT_FIELD_HEIGHT = 38
     let TEXT_FIELD_PADDING = 30
@@ -118,7 +119,27 @@ class ViewController: UIViewController {
         params["carBrand"] = self.carBrandTextField.text
         params["from"] = self.fromTextField.text
         params["to"] = self.toTextField.text
-        annuciator.sos(params)
+        
+        let sosMessage = annuciator.sos(params)
+        
+        let alert = UIAlertController(title: "Alert", message: sosMessage, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "cancel", style: UIAlertActionStyle.cancel) { (action) in
+            
+        })
+        alert.addAction(UIAlertAction(title: "send", style: UIAlertActionStyle.destructive) { (action) in
+            if (MFMessageComposeViewController.canSendText()) {
+                let smsController = MFMessageComposeViewController()
+                smsController.body = sosMessage
+                smsController.recipients = ["+8618521006525"]
+                smsController.messageComposeDelegate = self
+                self.present(smsController, animated: true, completion: nil)
+            }
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
+        
     }
 }
 
