@@ -25,7 +25,7 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
     lazy var fromTextField = UITextField()
     lazy var toTextField = UITextField()
     
-    lazy var sosButton = UIButton(type: UIButtonType.system)
+    lazy var sosButton = UIButton(type: UIButton.ButtonType.system)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,9 +52,9 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
                 textField.layer.sublayerTransform = CATransform3DMakeTranslation(15, 0, 0)
             }
         }
-        self.sosButton.setTitle("报警", for: UIControlState.normal)
+        self.sosButton.setTitle("报警", for: UIControl.State.normal)
         self.sosButton.backgroundColor = UIColor.white
-        self.sosButton.addTarget(self, action: #selector(didTappedSOSButton(button:)), for: UIControlEvents.touchUpInside)
+        self.sosButton.addTarget(self, action: #selector(didTappedSOSButton(button:)), for: UIControl.Event.touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -110,6 +110,19 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let alert = UIAlertController(title: "重要信息", message: "如果确定报警，App会使用你的个人号码向12110发送报警信息。如果虚假报警，公安机关有权依据《治安管理处罚法》的相关规定对当事人处以拘留和罚款。因报假案造成严重社会危害性，已经构成刑事犯罪的，则需要依法追究当事人刑事责任。", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "同意", style: UIAlertAction.Style.default) { (action) in
+            
+        })
+        alert.addAction(UIAlertAction(title: "不同意", style: UIAlertAction.Style.cancel) { (action) in
+            exit(0);
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     @objc func didTappedSOSButton(button: UIButton) {
         let annuciator = JHAnnunciator()
         let params = NSMutableDictionary()
@@ -122,15 +135,15 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
         
         let sosMessage = annuciator.sos(params)
         
-        let alert = UIAlertController(title: "Alert", message: sosMessage, preferredStyle: UIAlertControllerStyle.alert)
-        alert.addAction(UIAlertAction(title: "cancel", style: UIAlertActionStyle.cancel) { (action) in
+        let alert = UIAlertController(title: "报警到：12110\(params["cityZoneCode"] ?? "")", message: sosMessage, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "取消", style: UIAlertAction.Style.cancel) { (action) in
             
         })
-        alert.addAction(UIAlertAction(title: "send", style: UIAlertActionStyle.destructive) { (action) in
+        alert.addAction(UIAlertAction(title: "报警！", style: UIAlertAction.Style.destructive) { (action) in
             if (MFMessageComposeViewController.canSendText()) {
                 let smsController = MFMessageComposeViewController()
                 smsController.body = sosMessage
-                smsController.recipients = ["+8618521006525"]
+                smsController.recipients = ["12110\(params["cityZoneCode"] ?? "")"]
                 smsController.messageComposeDelegate = self
                 self.present(smsController, animated: true, completion: nil)
             }

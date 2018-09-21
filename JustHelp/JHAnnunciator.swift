@@ -12,9 +12,8 @@ class JHAnnunciator: NSObject {
     
     public func sos(_ params: NSDictionary) -> String {
         return """
-        报警到：12110\(params["cityZoneCode"] ?? "")
-        报警，有危险，\(params["carColor"] ?? "")颜色的\(params["carBrand"] ?? "")网约车，车牌号\(params["plateNumber"] ?? "")
-        从\(params["from"] ?? "")开往\(params["to"] ?? ""), 测试
+        报警，我在网约车上遇到危险，\(params["carColor"] ?? "")颜色的\(params["carBrand"] ?? "")车，车牌号\(params["plateNumber"] ?? "")
+        从\(params["from"] ?? "")开往\(params["to"] ?? "")。
         """
     }
 
